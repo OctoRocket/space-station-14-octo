@@ -31,7 +31,7 @@
   - type: Bin
     whitelist:
       Tags:
-        - Toothpick
+      - Toothpick
   - type: ContainerContainer
     containers:
       bin-container: !type:Container
