@@ -1,0 +1,13 @@
+- type: entity
+  parent: ClothingMaskBase
+  id: Toothpick
+  name: toothpick
+  description: For those who like the taste of wood.
+  components:
+    - type: Sprite
+      sprite: Objects/Misc/toothpick.rsi
+    - type: Clothing
+      sprite: Objects/Misc/toothpick.rsi
+    - type: Tag
+      tags:
+      - Toothpick
