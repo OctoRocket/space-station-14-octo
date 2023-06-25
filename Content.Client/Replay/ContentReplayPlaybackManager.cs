@@ -22,6 +22,7 @@ using Robust.Client.State;
 using Robust.Client.Timing;
 using Robust.Client.UserInterface;
 using Robust.Shared.ContentPack;
+using Robust.Shared.Serialization.Markdown.Mapping;
 using Robust.Shared.Utility;
 
 namespace Content.Client.Replay;
@@ -58,10 +59,10 @@ public sealed class ContentReplayPlaybackManager
         _loadMan.LoadOverride += LoadOverride;
     }
 
-    private void LoadOverride(IWritableDirProvider dir, ResPath resPath)
+    private void LoadOverride(IReplayFileReader fileReader)
     {
         var screen = _stateMan.RequestStateChange<LoadingScreen<bool>>();
-        screen.Job = new ContentLoadReplayJob(1/60f, dir, resPath, _loadMan, screen);
+        screen.Job = new ContentLoadReplayJob(1/60f, fileReader, _loadMan, screen);
         screen.OnJobFinished += (_, e) => OnFinishedLoading(e);
     }
 
@@ -99,6 +100,8 @@ public sealed class ContentReplayPlaybackManager
     {
         switch (message)
             {
+                case BoundUserInterfaceMessage:
+                    break; // TODO REPLAYS refactor BUIs
                 case ChatMessage chat:
                     // Just pass on the chat message to the UI controller, but skip speech-bubbles if we are fast-forwarding.
                     _uiMan.GetUIController<ChatUIController>().ProcessChatMessage(chat, speechBubble: !skipEffects);
@@ -129,8 +132,7 @@ public sealed class ContentReplayPlaybackManager
         return false;
     }
 
-
-    private void OnReplayPlaybackStarted()
+    private void OnReplayPlaybackStarted(MappingDataNode metadata, List<object> objects)
     {
         _conGrp.Implementation = new ReplayConGroup();
     }
